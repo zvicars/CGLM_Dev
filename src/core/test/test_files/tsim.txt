@@ -1,0 +1,57 @@
+ProbeVolume = {
+  name = pv
+  type = simple_rect
+  min = [ 0 0 0 ]
+  max = [ 3 3 3 ]
+}
+Bias = {
+  name = bias
+  type = nv
+  probevolume = pv
+  function = {
+    type = linear
+    phi = 3
+  }
+}
+Random = {
+  name = rng
+  type = mt19937
+  seed = 0
+}
+Lattice = {
+  name = test_lattice
+  type = 1DWrap
+  size = [ 20 20 20 ]
+  epsilon = 1.0
+  mu = -3.0
+  lambda = 1.0
+  density = 1.0
+  hasStateField = 0
+  default_state = 1
+  hasMuField = 0
+  hasPhiField = 0
+  generator = rng
+}
+Hamiltonian = {
+  name = ham
+  type = lattice_gas
+  biases = [ bias ]
+}
+
+Simulation = {
+  name = sim
+  type = default
+  lattice = test_lattice
+  hamiltonian = ham
+  rng = rng
+  sweeps = 100
+  Output = {
+    args = [ ratio h.h h.bias[0].pv.nv h.bias[0].u ]
+    begin_ts = 0
+    freq_ts = 10
+    begin_traj = 0
+    freq_traj = 10
+    output_file = timeseries.out
+    output_traj = traj.binary   
+  }
+}

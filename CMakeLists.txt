@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.0)
+enable_testing()
+project(CGLM VERSION 0.1)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 17)
+find_package(OpenMP)
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+add_subdirectory(src)

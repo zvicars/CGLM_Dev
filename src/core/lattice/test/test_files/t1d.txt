@@ -1,0 +1,19 @@
+Random = {
+  name =  rng
+  type = mt19937
+}
+
+Lattice = {
+  name = test_lattice
+  type = 1DWrap
+  size = [ 3 3 3 ]
+  epsilon = 1.0
+  mu = 1.0
+  lambda = 1.0
+  density = 1.0
+  hasStateField = 0
+  default_state = 1
+  hasMuField = 0
+  hasPhiField = 0
+  generator = rng
+}
