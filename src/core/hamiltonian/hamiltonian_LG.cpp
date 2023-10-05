@@ -15,9 +15,11 @@ Hamiltonian* Hamiltonian_LG::clone(){
 real Hamiltonian_LG::calc_dh(const Lattice& lattice){
   real eval = -lattice.eps()*lattice.getActiveAdj() + lattice.getActiveMu() + lattice.getActivePhi();
   if( lattice.getActiveState() ) eval = -eval;
+  double du = 0.0;
   for(Bias* bs : biases_){
-    eval += bs->calc_du(lattice);
+    du += bs->calc_du(lattice);
   }
+  eval += du;
   dh_ = eval;
   return eval;
 }
@@ -56,17 +58,6 @@ std::string Hamiltonian_LG::printStepOutput(std::string s){
     index = std::stoi(s_step);
     FANCY_ASSERT(index < biases_.size(), "invalid index specified");
     return biases_[index]->printStepOutput(s_post);
-  }
-  if(s.find("pv") == 0){
-    std::size_t index;
-    std::string s_pre = s.substr(0, s.find('.'));
-    std::string s_post = s.substr(s.find('.')+1);
-    int length = s_pre.find(']') - s_pre.find('[')-1;
-    FANCY_ASSERT(length > 0, "failed to find index in ouput that requires an index")
-    std::string s_step = s.substr(s_pre.find('[')+1, s_pre.find(']') - s_pre.find('[')-1);
-    index = std::stoi(s_step);
-    FANCY_ASSERT(index < pvs_.size(), "invalid index specified");
-    return pvs_[index]->printStepOutput(s_post);
   }
   FANCY_ASSERT(0, "invalid output type specified");
   return "";

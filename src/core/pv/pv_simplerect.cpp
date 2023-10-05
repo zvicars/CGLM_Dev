@@ -82,3 +82,22 @@ std::string PV_SimpleRect::printStepOutput(std::string s){
   FANCY_ASSERT(0, "invalid output type specified");
   return "";
 }
+
+void PV_SimpleRect::bounds(Vec<std::size_t>& vec_out){
+  vec_out.clear();
+  #pragma unroll
+  for(int i = 0; i < 3; i++){
+    vec_out[i] = min_[i];
+    vec_out[i+3] = max_[i];
+  }
+  return;
+}
+
+bool PV_SimpleRect::isInside(Vec3<std::size_t> idx){
+  #pragma unroll
+  for(int i = 0; i < 3; i++){
+    if(idx[i] < min_[i]) return 0;
+    if(idx[i] > max_[i]) return 0;
+  }
+  return 1;
+}

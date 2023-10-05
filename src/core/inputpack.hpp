@@ -22,7 +22,7 @@ class InputPack{
   InputPack(){return;}
   InputPack(const ParameterPack& params){
     set(params);
-    bool isMasterPack = 1; //if it's a master pack, it will delete the objects pointed to
+    isMasterPack = 1; //if it's a master pack, it will delete the objects pointed to
     lattices_ = new strmap<Lattice*>;
     hamiltonians_ = new strmap<Hamiltonian*>;
     biases_ = new strmap<Bias*>;

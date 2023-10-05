@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <limits>
+#include <stdint.h>
 #include "../inputpack.hpp"
 //output handler class will be hand-written to allow outputting information from a simulation at a given timestep
 //each object will have a function called sendOutput(), which sends a set of key-value pairs that the output handler
@@ -47,12 +48,25 @@ class OutputHandler{
       ofile_handle_traj_ = new std::ofstream(ofile_traj_, std::ios::binary);      
       return;
     }
-    void output_ts(Simulation* sim, std::size_t step);
-    void output_traj(Simulation* sim, std::size_t step);
+    void output_ts(Simulation* sim, std::uint64_t step);
+    void output_traj(Simulation* sim, std::uint64_t step);
+    void close_outputs(){
+      ofile_handle_ts_->close();
+      ofile_handle_traj_->close();
+    }
+    //mulitplies output values by sweep size for more convenient units
+    void setSweepSize(uint64_t sweepSize){
+      begin_traj_ *= sweepSize;
+      end_traj_ *= sweepSize;
+      freq_traj_ *= sweepSize;
+      begin_ts_ *= sweepSize;
+      end_ts_ *= sweepSize;
+      freq_ts_ *= sweepSize;
+    }
   private:
     std::vector<std::string> output_commands_;
     std::string ofile_ts_, ofile_traj_;
-    std::size_t begin_ts_ = 0, end_ts_ = std::numeric_limits<std::size_t>::max(), freq_ts_ = 1;
-    std::size_t begin_traj_ = 0, end_traj_ = std::numeric_limits<std::size_t>::max(), freq_traj_ = 1;
+    uint64_t begin_ts_ = 0, end_ts_ = std::numeric_limits<uint64_t>::max(), freq_ts_ = 1;
+    uint64_t begin_traj_ = 0, end_traj_ = std::numeric_limits<uint64_t>::max(), freq_traj_ = 1;
     std::ofstream* ofile_handle_ts_, * ofile_handle_traj_;
 };

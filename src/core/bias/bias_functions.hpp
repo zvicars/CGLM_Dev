@@ -11,11 +11,13 @@ class HarmonicPotential : public BiasFunction{
     HarmonicPotential(const ParameterPack& input){
       input.readNumber("xstar", ParameterPack::KeyType::Required, xstar_);
       input.readNumber("kappa", ParameterPack::KeyType::Required, kappa_);
+      halfkappa_ = kappa_*0.5;
       return;
     }
     HarmonicPotential(real kappa, real xstar){
       xstar_ =  xstar;
       kappa_ = kappa;
+      halfkappa_ = kappa*0.5;
     }
     //u
     virtual real operator()(real x){

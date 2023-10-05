@@ -6,6 +6,7 @@ Random = {
 Lattice = {
   name = test_lattice
   type = 1DWrap
+  nonfixed_list = 0
   size = [ 3 3 3 ]
   epsilon = 1.0
   mu = 1.0

@@ -61,19 +61,24 @@ void computePhiField(Matrix3d<real>& phi, const Vec<AtomFF>& atoms, Vec3<std::si
     Vec3<int> min, max;
     for(int i = 0; i < 3; i++){
       min[i] = at_idx[i] - range;
-      max[i] = at_idx[i] + range; 
+      max[i] = at_idx[i] + range;
+      if(max[i] - min[i] > box_size[i]){
+        min[i] = 0;
+        max[i] = box_size[i];
+      }
     }
     for(int i = min[0]; i <= max[0]; i++)
     for(int j = min[1]; j <= max[1]; j++)
     for(int k = min[2]; k <= max[2]; k++){
       std::size_t i_temp, j_temp, k_temp;
       i_temp = wrapIndex(i, box_size[0]);
-      j_temp = wrapIndex(i, box_size[1]);
-      k_temp = wrapIndex(i, box_size[2]);
+      j_temp = wrapIndex(j, box_size[1]);
+      k_temp = wrapIndex(k, box_size[2]);
       Vec3<std::size_t> real_idx = {i_temp, j_temp, k_temp};
       double eval;
       if(integrate) eval = computePhiForSingleCellIntegrated(real_idx, box_size, spacing, atom);
       else eval = computePhiForSingleCell(real_idx, box_size, spacing, atom);
+      if(eval  > 100) eval = 100;
       phi.at(real_idx) += eval;
     }
   }
@@ -98,7 +103,7 @@ int main (int argc, char** argv){
       continue;
     }
     if(arg == "-gs"){
-      FANCY_ASSERT(argc >= i+2, "not enough input arguments for -box, need -box x y z");
+      FANCY_ASSERT(argc >= i+2, "not enough input arguments for -box, need -gs <float>");
       spacing = std::stod(argv[i+1]);
       i++;
       continue;

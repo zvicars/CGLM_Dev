@@ -1,4 +1,7 @@
 #include "hamiltonian_CGLM.hpp"
+#include "../lattice/lattice.hpp"
+#include "../lattice/lattice_pbc.hpp"
+#include "../../tools/stlmath.hpp"
 Hamiltonian_CGLM::Hamiltonian_CGLM(InputPack& input) : Hamiltonian_LG{input}{
   input_->params().readFlag("use_aux", ParameterPack::KeyType::Optional, use_aux_);
   if(use_aux_){
@@ -34,6 +37,17 @@ Hamiltonian_CGLM::Hamiltonian_CGLM(InputPack& input) : Hamiltonian_LG{input}{
   FANCY_ASSERT(ptr != 0, "failed to find probevolume: " + vp_name + ".");
   vp_ = ptr->clone();
   //should have all of the requisite data
+  //build subvolume pairs
+  for(int i = 0; i < ve_vec_.size(); i++){
+    for(int j = i; j < ve_vec_.size(); j++){
+      bool self = j==i;
+      SubvolumePair svp1;
+      Vec2<ProbeVolume*> pvs = {ve_vec_[i], ve_vec_[j]};
+      svp1.pvs = pvs;
+      svp1.self = self;
+    }
+  }
+
   return; 
 }
 
@@ -50,4 +64,46 @@ real Hamiltonian_CGLM::calc_h(const Lattice& lattice){
   real hlg = Hamiltonian_LG::calc_h(lattice);
 
   return 0.0;
+}
+
+real Hamiltonian_CGLM::computeChiUU(const Lattice& lattice){
+  real eval = 0.0;
+  auto size = lattice.size();
+  for(std::size_t i = 0; i < size[0]; i++){
+    for(std::size_t j = 0; j < size[1]; j++){
+      for(std::size_t k = 0; k < size[2]; k++){
+        Vec3<std::size_t> ref_idx = {i,j,k};
+        Vec3<int> ref_site = {i,j,k};
+        if(!lattice.getState(ref_idx)) continue;
+        for(int l = 0; l < chi_ij_offsets_.size(); i++){
+          Vec3<int> new_site = ref_site + chi_ij_offsets_[l];
+          auto new_idx = wrap3(new_site, lattice.size());
+          if(!lattice.getState(new_idx)) continue;
+          eval += lattice.getPhi(ref_idx)*lattice.getPhi(new_idx)*chi_ij_values_[l]; 
+        }
+      }
+    }
+  }
+  return eval;
+}
+
+real computeChiPU(ProbeVolume* pv, const Lattice& lattice){
+  real eval = 0.0;
+  auto size = lattice.size();
+  for(std::size_t i = 0; i < size[0]; i++){
+    for(std::size_t j = 0; j < size[1]; j++){
+      for(std::size_t k = 0; k < size[2]; k++){
+        Vec3<std::size_t> ref_idx = {i,j,k};
+        Vec3<int> ref_site = {i,j,k};
+        if(!lattice.getState(ref_idx)) continue;
+        for(int l = 0; l < chi_ij_offsets_.size(); i++){
+          Vec3<int> new_site = ref_site + chi_ij_offsets_[l];
+          auto new_idx = wrap3(new_site, lattice.size());
+          if(!lattice.getState(new_idx)) continue;
+          eval += lattice.getPhi(ref_idx)*lattice.getPhi(new_idx)*chi_ij_values_[l]; 
+        }
+      }
+    }
+  }
+  return eval;
 }

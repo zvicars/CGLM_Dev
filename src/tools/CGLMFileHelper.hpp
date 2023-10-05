@@ -42,6 +42,38 @@ static void binary_bool_read(std::ifstream& fin, std::vector<bool>& x, Vec3<std:
     return;
 }
 
+static void binary_char_write(std::ofstream& fout, const std::vector<char>& x, Vec3<std::size_t>& size)
+{
+    std::size_t n = size[0]*size[1]*size[2];
+    std::size_t sx = size[0], sy = size[1], sz = size[2];
+    fout.write((char*)&sx, sizeof(std::size_t));
+    fout.write((char*)&sy, sizeof(std::size_t));
+    fout.write((char*)&sz, sizeof(std::size_t));
+    for(std::vector<char>::size_type i = 0; i < n; i++)
+    {
+        char x_i = x[i];
+        fout.write((const char*)&x_i, sizeof(char));
+    }
+    return;
+}
+
+static void binary_char_read(std::ifstream& fin, std::vector<char>& x, Vec3<std::size_t>& size)
+{
+    std::size_t sx, sy, sz;
+    fin.read((char*)&sx, sizeof(std::size_t));
+    fin.read((char*)&sy, sizeof(std::size_t));
+    fin.read((char*)&sz, sizeof(std::size_t));
+    size[0] = sx;
+    size[1] = sy;
+    size[2] = sz;
+    x.resize(size[0]*size[1]*size[2]);
+    for(std::vector<char>::size_type i = 0; i < x.size(); i++)
+    {
+        fin.read((char*)&x[i], sizeof(char));
+    }
+    return;
+}
+
 static void binary_real_write(std::ofstream& fout, const std::vector<real>& x, Vec3<std::size_t>& size)
 {
     std::size_t n = size[0]*size[1]*size[2];
@@ -49,7 +81,7 @@ static void binary_real_write(std::ofstream& fout, const std::vector<real>& x, V
     fout.write((char*)&sx, sizeof(std::size_t));
     fout.write((char*)&sy, sizeof(std::size_t));
     fout.write((char*)&sz, sizeof(std::size_t));
-    for(std::vector<bool>::size_type i = 0; i < n;)
+    for(std::vector<real>::size_type i = 0; i < n; i++)
     {
         real x_i = x[i];
         fout.write((const char*)&x_i, sizeof(real));
@@ -67,7 +99,7 @@ static void binary_real_read(std::ifstream& fin, std::vector<real>& x, Vec3<std:
     size[1] = sy;
     size[2] = sz;
     x.resize(size[0]*size[1]*size[2]);
-    for(std::vector<bool>::size_type i = 0; i < x.size();)
+    for(std::vector<real>::size_type i = 0; i < x.size(); i++)
     {
         fin.read((char*)&x[i], sizeof(real));
     }
@@ -81,8 +113,12 @@ static bool readFileIntoArray(std::ifstream& fin, const Vec3<std::size_t>& size,
     binary_real_read(fin, data_read, size_read);
     FANCY_ASSERT(size_read[0] == size[0] && size_read[1] == size[1] && size_read[2] == size[2], "sizes do not match");
     data.initialize(size_read);
-    for(int i = 0; i < data_read.size(); i++){
-        data.at_1d(i) = data_read[i];
+    for(std::size_t i = 0; i < data_read.size(); i++){
+        Vec3<std::size_t> pos = data.map1N(i);
+        auto new_idx = data.mapN1(pos);
+        data.at(pos) = data_read[i];
+        //std::cout << pos[0] << "  " << pos[1] << "  " << pos[2] << "  " << data.at(pos) << std::endl;
+        //std::cin.get();
     }
     return 0;
 }

@@ -18,8 +18,8 @@
 
 
 Simulation* simulationFactory(InputPack& in){
-  std::string type;
-  in.params().readString("type", ParameterPack::KeyType::Required, type);
+  std::string type = "default";
+  in.params().readString("type", ParameterPack::KeyType::Optional, type);
   if(type == "default") return new Simulation(in);
   return 0;
 }

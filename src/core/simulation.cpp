@@ -34,6 +34,8 @@ Simulation::Simulation(InputPack& input) : Object{input}{
   }
   input_->params().readNumber("sweeps", ParameterPack::KeyType::Required, max_sweeps_);
   current_sweep_ = 0;
+  total_step_counter_ = 0;
+  output_.setSweepSize(lattice_->sweepSize());
   return;
 };
 
@@ -55,11 +57,13 @@ bool Simulation::step(){
 };
 
 void Simulation::sweep(){
-  auto box_size = lattice_->size();
-  std::size_t nflips_max = box_size[0]*box_size[1]*box_size[2], nflips = 0, nsucc = 0;
+  std::size_t nflips_max = lattice_->sweepSize(), nflips = 0, nsucc = 0;
   while(nflips < nflips_max){
+    output_.output_traj(this, total_step_counter_);
+    output_.output_ts(this, total_step_counter_);
     nsucc += step();
     nflips++;
+    total_step_counter_++;
   }
   accept_ratio_ = (real)nsucc/(real)nflips;
   return;
@@ -67,11 +71,11 @@ void Simulation::sweep(){
 
 void Simulation::run(){
   initialize();
+  total_step_counter_ = 0;
   for(current_sweep_ = 0; current_sweep_ < max_sweeps_; current_sweep_++){
-    output_.output_traj(this, current_sweep_);
-    output_.output_ts(this, current_sweep_);
     sweep();
   }
+  //output_.close_outputs();
   return;
 }
 

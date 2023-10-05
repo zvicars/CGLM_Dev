@@ -16,6 +16,8 @@ class ProbeVolume : public Object{
     nv_ += dnv_;
     dnv_ = 0.0;
   }
+  virtual void bounds(Vec<std::size_t>&) = 0;
+  virtual bool isInside(Vec3<std::size_t> idx) = 0;
   virtual ProbeVolume* clone() = 0;
   protected:
   real nv_, dnv_;

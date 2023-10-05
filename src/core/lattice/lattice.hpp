@@ -21,7 +21,7 @@ class Lattice : public Object{
   real lambda() const { return lambda_;}
   real lambda3() const { return lambda3_;}
   real density() const { return density_;}
-
+  virtual void TestPrint()=0;
   //site info getters
   //any get active site must be in-bounds
   Vec3<std::size_t> getActiveIndex() const { return active_index_; }
@@ -30,13 +30,16 @@ class Lattice : public Object{
   virtual bool getActiveState() const { return active_state_; }
   virtual real getMu(const Vec3<std::size_t>& idx) const = 0;
   real getMuPBC(const Vec3<int>& index) const;
-  virtual bool getActiveMu() const { return active_mu_; }
+  virtual real getActiveMu() const { return active_mu_; }
   virtual real getPhi(const Vec3<std::size_t>& idx) const = 0;
   real getPhiPBC(const Vec3<int>& index) const;
-  virtual bool getActivePhi() const { return active_phi_; }
+  virtual real getActivePhi() const { return active_phi_; }
   int getAdj(const Vec3<std::size_t>& index) const; //num of adjacent sites
   int getAdjPBC(const Vec3<int>& index) const; //num of adjacent sites
   virtual int getActiveAdj() const { return active_adj_; }
+  virtual int sweepSize(){
+    return size_[0]*size_[1]*size_[2];
+  }
   //output functions
   virtual void reportInfo(string& in);
   protected:

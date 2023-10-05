@@ -52,6 +52,7 @@ void runSingleSimulation(Simulation* simulation){
 
 void runSimulations(InputPack& master_input_pack){
   auto sims = master_input_pack.simulations();
+  int num_sims = sims->size();
   #pragma omp parallel for
   for(auto entry : *sims){
     runSingleSimulation(entry.second);

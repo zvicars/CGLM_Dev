@@ -2,11 +2,11 @@
 #include "../tools/Matrix.hpp"
 #include <limits>
 #include <iostream>
-bool readFrameBinary(Vec3<std::size_t>& size, Vec<bool>& states, std::ifstream& ifile){
-  binary_bool_read(ifile, states, size);
+bool readFrameBinary(Vec3<std::size_t>& size, Vec<char>& states, std::ifstream& ifile){
+  binary_char_read(ifile, states, size);
   return ifile.fail();
 }
-bool writeFrameXYZ(Vec3<std::size_t>& size, Vec<bool>& states, std::ofstream& ofile){
+bool writeFrameXYZ(Vec3<std::size_t>& size, Vec<char>& states, std::ofstream& ofile){
   std::size_t natoms = states.size();
   ofile << natoms << std::endl;
   Matrix3d<char> newMat;
@@ -15,7 +15,7 @@ bool writeFrameXYZ(Vec3<std::size_t>& size, Vec<bool>& states, std::ofstream& of
   ofile << "generated from b2xyz" << std::endl;
   for(int i = 0; i < states.size(); i++){
     auto idx = newMat.map1N(i); 
-    if(states[i] == 1){
+    if(states[i] == '1'){
       ofile << "LIQ  " << idx[0] << "  " << idx[1] << "  " << idx[2] << "\n"; 
     }
     else{
@@ -24,6 +24,7 @@ bool writeFrameXYZ(Vec3<std::size_t>& size, Vec<bool>& states, std::ofstream& of
   }
   return 0;
 }
+
 int main(int argc, char** argv){
   int begin = 0 , end = std::numeric_limits<int>::max(), frequency = 1;
   std::string file_in = "traj.binary", file_out = "traj.xyz";
@@ -56,7 +57,7 @@ int main(int argc, char** argv){
     }    
   }
   Vec3<std::size_t> size;
-  std::vector<bool> states;
+  std::vector<char> states;
   int counter = 0; 
   std::ifstream ifile(file_in, std::ios::binary);
   std::ofstream ofile(file_out);
@@ -72,5 +73,6 @@ int main(int argc, char** argv){
     }
     counter++;
   }
+  ofile.close();
   return 0;
 }
