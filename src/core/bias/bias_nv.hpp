@@ -9,6 +9,9 @@ class Bias_Nv : public Bias{
     delete pv_;
     delete bf_;
   };
+  virtual void sweepUpdate(real time){
+    bf_->sweepUpdate(time);
+  }
   virtual real calc_u(const Lattice& lattice){
     u_ = (*bf_)(pv_->calc_nv(lattice));
     return u_;

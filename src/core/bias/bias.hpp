@@ -18,6 +18,9 @@ class Bias : public Object{
     du_ = 0;
     return;
   }
+  virtual void sweepUpdate(real time){
+    return;
+  }
   virtual Bias* clone()=0;
   protected:
   //value for u so there's some updated value of u that updates with du

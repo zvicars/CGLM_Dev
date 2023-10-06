@@ -10,6 +10,12 @@ class Hamiltonian : public Object{
   virtual ~Hamiltonian();
   virtual real calc_dh(const Lattice& lattice) = 0;
   virtual real calc_h(const Lattice& lattice) = 0; 
+  //general update function, do any time-dependent stuff
+  virtual void sweepUpdate(real time){
+    for(auto bias : biases_){
+      bias->sweepUpdate(time);
+    }
+  }
   real h(){
     return h_;
   }

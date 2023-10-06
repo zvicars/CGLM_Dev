@@ -4,6 +4,7 @@ class Hamiltonian_LG : public Hamiltonian{
   public:
   Hamiltonian_LG(InputPack& input);
   ~Hamiltonian_LG() = default;
+  virtual void sweepUpdate(real time);
   virtual real calc_dh(const Lattice& lattice);
   virtual real calc_h(const Lattice& lattice); 
   virtual Hamiltonian* clone();

@@ -54,15 +54,6 @@ class OutputHandler{
       ofile_handle_ts_->close();
       ofile_handle_traj_->close();
     }
-    //mulitplies output values by sweep size for more convenient units
-    void setSweepSize(uint64_t sweepSize){
-      begin_traj_ *= sweepSize;
-      end_traj_ *= sweepSize;
-      freq_traj_ *= sweepSize;
-      begin_ts_ *= sweepSize;
-      end_ts_ *= sweepSize;
-      freq_ts_ *= sweepSize;
-    }
   private:
     std::vector<std::string> output_commands_;
     std::string ofile_ts_, ofile_traj_;

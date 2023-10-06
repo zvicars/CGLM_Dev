@@ -12,6 +12,13 @@ Hamiltonian* Hamiltonian_LG::clone(){
   return ret_ptr;
 }
 
+void Hamiltonian_LG::sweepUpdate(real time){
+  for(auto bias : biases_){
+    bias->sweepUpdate(time);
+  }
+  return;
+}
+
 real Hamiltonian_LG::calc_dh(const Lattice& lattice){
   real eval = -lattice.eps()*lattice.getActiveAdj() + lattice.getActiveMu() + lattice.getActivePhi();
   if( lattice.getActiveState() ) eval = -eval;

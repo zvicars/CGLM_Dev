@@ -35,7 +35,6 @@ Simulation::Simulation(InputPack& input) : Object{input}{
   input_->params().readNumber("sweeps", ParameterPack::KeyType::Required, max_sweeps_);
   current_sweep_ = 0;
   total_step_counter_ = 0;
-  output_.setSweepSize(lattice_->sweepSize());
   return;
 };
 
@@ -59,9 +58,9 @@ bool Simulation::step(){
 void Simulation::sweep(){
   std::size_t nflips_max = lattice_->sweepSize(), nflips = 0, nsucc = 0;
   while(nflips < nflips_max){
-    output_.output_traj(this, total_step_counter_);
-    output_.output_ts(this, total_step_counter_);
+    //attempt flip
     nsucc += step();
+    //iterate
     nflips++;
     total_step_counter_++;
   }
@@ -73,6 +72,12 @@ void Simulation::run(){
   initialize();
   total_step_counter_ = 0;
   for(current_sweep_ = 0; current_sweep_ < max_sweeps_; current_sweep_++){
+    //pretty much just updates ramped biases, once per sweep because it's kinda wasteful to do it every flip
+    ham_->sweepUpdate( current_sweep_ );
+    //per-step updates
+    output_.output_traj(this, current_sweep_);
+    output_.output_ts(this, current_sweep_);
+    //sweep
     sweep();
   }
   //output_.close_outputs();
