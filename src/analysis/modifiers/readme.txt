@@ -1,0 +1,1 @@
+modifiers mess with each frame before any analysis is performed on it

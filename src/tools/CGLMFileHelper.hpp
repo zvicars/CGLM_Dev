@@ -26,8 +26,11 @@ static void binary_bool_read(std::ifstream& fin, std::vector<bool>& x, Vec3<std:
 {
     std::size_t sx, sy, sz;
     fin.read((char*)&sx, sizeof(std::size_t));
+    if(fin.fail()) return;
     fin.read((char*)&sy, sizeof(std::size_t));
+    if(fin.fail()) return;
     fin.read((char*)&sz, sizeof(std::size_t));
+    if(fin.fail()) return;
     size[0] = sx;
     size[1] = sy;
     size[2] = sz;
@@ -36,6 +39,7 @@ static void binary_bool_read(std::ifstream& fin, std::vector<bool>& x, Vec3<std:
     {
         unsigned char aggr;
         fin.read((char*)&aggr, sizeof(unsigned char));
+        if(fin.fail()) return;
         for(unsigned char mask = 1; mask > 0 && i < x.size(); ++i, mask <<= 1)
             x.at(i) = aggr & mask;
     }
@@ -61,8 +65,11 @@ static void binary_char_read(std::ifstream& fin, std::vector<char>& x, Vec3<std:
 {
     std::size_t sx, sy, sz;
     fin.read((char*)&sx, sizeof(std::size_t));
+    if(fin.fail()) return;
     fin.read((char*)&sy, sizeof(std::size_t));
+    if(fin.fail()) return;
     fin.read((char*)&sz, sizeof(std::size_t));
+    if(fin.fail()) return;
     size[0] = sx;
     size[1] = sy;
     size[2] = sz;
@@ -70,6 +77,7 @@ static void binary_char_read(std::ifstream& fin, std::vector<char>& x, Vec3<std:
     for(std::vector<char>::size_type i = 0; i < x.size(); i++)
     {
         fin.read((char*)&x[i], sizeof(char));
+        if(fin.fail()) return;
     }
     return;
 }
@@ -93,8 +101,11 @@ static void binary_real_read(std::ifstream& fin, std::vector<real>& x, Vec3<std:
 {
     std::size_t sx, sy, sz;
     fin.read((char*)&sx, sizeof(std::size_t));
+    if(fin.fail()) return;
     fin.read((char*)&sy, sizeof(std::size_t));
+    if(fin.fail()) return;
     fin.read((char*)&sz, sizeof(std::size_t));
+    if(fin.fail()) return;
     size[0] = sx;
     size[1] = sy;
     size[2] = sz;
@@ -102,6 +113,7 @@ static void binary_real_read(std::ifstream& fin, std::vector<real>& x, Vec3<std:
     for(std::vector<real>::size_type i = 0; i < x.size(); i++)
     {
         fin.read((char*)&x[i], sizeof(real));
+        if(fin.fail()) return;
     }
     return;
 }
