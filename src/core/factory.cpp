@@ -23,6 +23,7 @@ Simulation* simulationFactory(InputPack& in){
   std::string type = "default";
   in.params().readString("type", ParameterPack::KeyType::Optional, type);
   if(type == "default") return new Simulation(in);
+  FANCY_ASSERT(0, "unknown type given to simulation factory, user provided: " + type + " which is not a recognized type.");
   return 0;
 }
 Lattice* latticeFactory(InputPack& in){
@@ -36,6 +37,7 @@ Bias* biasFactory(InputPack& in){
   std::string type;
   in.params().readString("type", ParameterPack::KeyType::Required, type);
   if(type == "nv") return new Bias_Nv(in);
+  FANCY_ASSERT(0, "unknown type given to bias factory, user provided: " + type + " which is not a recognized type.");
   return 0;
 }
 Hamiltonian* hamiltonianFactory(InputPack& in){
@@ -43,7 +45,7 @@ Hamiltonian* hamiltonianFactory(InputPack& in){
   in.params().readString("type", ParameterPack::KeyType::Required, type);
   if(type == "lattice_gas") return new Hamiltonian_LG(in);
   //if(type == "cglm") return new Hamiltonian_CGLM(in);
-  std::cerr << "Unidentified Hamiltonian type " << type << std::endl;
+  FANCY_ASSERT(0, "unknown type given to hamiltonian factory, user provided: " + type + " which is not a recognized type.");
   return 0;
 }
 ProbeVolume* probevolumeFactory(InputPack& in){
@@ -51,13 +53,13 @@ ProbeVolume* probevolumeFactory(InputPack& in){
   in.params().readString("type", ParameterPack::KeyType::Required, type);
   if(type == "simple_rect") return new PV_SimpleRect(in);
   if(type == "cylinder") return new PV_Cylinder(in);
-  std::cerr << "Unidentified ProbeVolume type " << type << std::endl;
+  FANCY_ASSERT(0, "unknown type given to pv factory, user provided: " + type + " which is not a recognized type.");
   return 0;
 }
 RNG* randomFactory(InputPack& in){
   std::string type;
   in.params().readString("type", ParameterPack::KeyType::Required, type);
   if(type == "mt19937") return new RNG_mt19937(in);
-  std::cerr << "Unidentified RNG type " << type << std::endl;
+  FANCY_ASSERT(0, "unknown type given to rng factory, user provided: " + type + " which is not a recognized type.");
   return 0;
 }
