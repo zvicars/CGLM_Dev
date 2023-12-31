@@ -18,7 +18,8 @@ Lattice_1DWrap::Lattice_1DWrap(InputPack& input) : Lattice{input}{
     loadFileIntoDataArray(mff_, mu_field_);
   }
   size_1d_ = state_.size_1d();
-  input_->params().readFlag("nonfixed_list", ParameterPack::KeyType::Required, fixed_);
+  fixed_ = 0;
+  input_->params().readFlag("nonfixed_list", ParameterPack::KeyType::Optional, fixed_);
   if(fixed_){
     input_->params().readNumber("nonfixed_list_threshold", ParameterPack::KeyType::Required, nfl_cutoff_); 
     setNonfixedList();
@@ -68,7 +69,8 @@ Lattice_1DWrap::Lattice_1DWrap(InputPack& input, bool placeholder):Lattice{input
     loadFileIntoDataArray(mff_, mu_field_);
   }
   size_1d_ = state_.size_1d();
-  input_->params().readFlag("nonfixed_list", ParameterPack::KeyType::Required, fixed_);
+  fixed_ = 0;
+  input_->params().readFlag("nonfixed_list", ParameterPack::KeyType::Optional, fixed_);
   if(fixed_){
     input_->params().readNumber("nonfixed_list_threshold", ParameterPack::KeyType::Required, nfl_cutoff_); 
     setNonfixedList();

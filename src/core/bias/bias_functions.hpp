@@ -20,7 +20,7 @@ class HarmonicPotential : public BiasFunction{
       }
       else{
         input.readNumber("kappa", ParameterPack::KeyType::Required, kappa_);
-        kr = { kappa_, kappa_, 0, 1 };
+        kr = { 0, 1, kappa_, kappa_ };
       }
       kt0_ = kr[0]; ktf_ = kr[1]; k0_ = kr[2]; kf_ = kr[3];
       kslope_ = (kr[3]-kr[2])/(kr[1]-kr[0]);

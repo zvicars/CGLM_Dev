@@ -19,5 +19,6 @@ class Simulation : public Object{
     uint64_t total_step_counter_;
     real accept_ratio_;
     OutputHandler output_;
+    int print_freq_;
   friend OutputHandler;
 };

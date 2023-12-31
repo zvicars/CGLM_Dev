@@ -11,6 +11,10 @@ Simulation::Simulation(InputPack& input) : Object{input}{
   input_->params().readString("lattice", ParameterPack::KeyType::Required, lattice_name);
   input_->params().readString("rng", ParameterPack::KeyType::Required, rng_name);
   input_->params().readString("hamiltonian", ParameterPack::KeyType::Required, ham_name);
+  print_freq_ = 1;
+  input_->params().readNumber("print_freq", ParameterPack::KeyType::Optional, print_freq_);
+  if(print_freq_ < 1) print_freq_ = std::numeric_limits<int>::max();
+  FANCY_ASSERT(print_freq_ > 0, "print frequency needs to be a positive integer");
   //search input pack for constructed versions of parameters
   Lattice* lattice_ptr;
   RNG* rng_ptr;
@@ -77,6 +81,11 @@ void Simulation::run(){
     //per-step updates
     output_.output_traj(this, current_sweep_);
     output_.output_ts(this, current_sweep_);
+    if((current_sweep_+1)%print_freq_ == 0){
+      std::cout << current_sweep_+1 << " ";
+      std::cout << std::flush;
+    }
+
     //sweep
     sweep();
   }

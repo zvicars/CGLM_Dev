@@ -3,7 +3,7 @@
 #include "../../tools/stlmath.hpp"
 #include "../../tools/pbcfunctions.hpp"
 #include <iostream>
-real LJ_6_12(Vec3<real> x, Vec3<real> xref, Vec3<real> size, Vec<real> params){
+real LJ_6_12_default(Vec3<real> x, Vec3<real> xref, Vec3<real> size, Vec<real> params){
   getNearestImage3D(x, xref, size);
   auto r = norm2(x-xref);
   return LJ_6_12(r, params[0], params[1]);

@@ -4,6 +4,7 @@ target_sources(CORE PRIVATE
  lattice/lattice_1DWrap.cpp
  pv/probevolume.cpp
  pv/pv_simplerect.cpp
+ pv/pv_cylinder.cpp
  bias/bias_nv.cpp
  hamiltonian/hamiltonian.cpp
  hamiltonian/hamiltonian_LG.cpp
@@ -19,7 +20,7 @@ target_link_libraries(CORE PRIVATE TOOLS)
 #if(OpenMP_CXX_FOUND)
 #target_link_libraries(ANALYSIS PRIVATE GOLOSIO OpenMP::OpenMP_CXX)
 #endif()
-target_compile_options(CORE PRIVATE -O0)
+target_compile_options(CORE PRIVATE -O3)
 
 add_subdirectory(lattice/test)
 add_subdirectory(hamiltonian/test)

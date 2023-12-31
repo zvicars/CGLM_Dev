@@ -17,7 +17,7 @@ struct AtomFF{
     params = params_in;
     //standard lj particles
     if(funct == 1){
-      funct_ptr = *LJ_6_12;
+      funct_ptr = *LJ_6_12_default;
     }
     //big particles
     else if(funct == 2){

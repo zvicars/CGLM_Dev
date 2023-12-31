@@ -20,7 +20,7 @@ int main(){
     double diff2 = 0.0;
     
     for(int i = 0; i < 3; i++){
-        diff2 += fabs(x_in[i] - tot_com[i]); 
+        diff2 += fabs(x_in[i]+0.5 - tot_com[i]); 
     }
 
     if(diff > testing_threshold) {

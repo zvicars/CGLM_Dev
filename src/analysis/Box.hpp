@@ -59,6 +59,6 @@ public:
   Vec3<std::size_t> size_, phi_size_;
   Matrix3d<real> lattice_;
   bool hasPhi_ = 0;
-  Matrix3d<char> phi_;
+  Matrix3d<real> phi_;
   int frame_=0;
 };

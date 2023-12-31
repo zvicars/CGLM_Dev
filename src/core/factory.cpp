@@ -13,6 +13,8 @@
 
 #include "pv/probevolume.hpp"
 #include "pv/pv_simplerect.hpp"
+#include "pv/pv_cylinder.hpp"
+
 #include "rng/random.hpp"
 
 
@@ -47,6 +49,7 @@ ProbeVolume* probevolumeFactory(InputPack& in){
   std::string type;
   in.params().readString("type", ParameterPack::KeyType::Required, type);
   if(type == "simple_rect") return new PV_SimpleRect(in);
+  if(type == "cylinder") return new PV_Cylinder(in);
   return 0;
 }
 RNG* randomFactory(InputPack& in){
