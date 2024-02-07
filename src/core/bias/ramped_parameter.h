@@ -59,8 +59,9 @@ public:
   
 protected:
   void checkIncreasing(){
-    real previous = std::numeric_limits<real>::min();
-    for(auto val : x_){
+    real previous = std::numeric_limits<real>::lowest();
+    for(int i = 0; i < x_.size(); i++){
+        real val = x_[i];
         FANCY_ASSERT(previous < val, "x-points are not in increasing order");
         previous = val;
     }
