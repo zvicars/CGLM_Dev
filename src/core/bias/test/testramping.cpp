@@ -4,7 +4,7 @@
 #include <fstream>
 #include <cmath>
 #include <string>
-#include "../ramped_parameter.h"
+#include "../ramped_parameter.hpp"
 #define TOL 0.0001
 
 //just contains a raw list of output values

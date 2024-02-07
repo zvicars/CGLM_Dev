@@ -1,7 +1,7 @@
 #pragma once
 #include "../../tools/InputParser.hpp"
 #include "../../typedefs.hpp"
-#include "ramped_parameter.h"
+#include "ramped_parameter.hpp"
 class BiasFunction{
   public:
     virtual real operator()(real n) = 0;
@@ -15,19 +15,12 @@ class HarmonicPotential : public BiasFunction{
     HarmonicPotential(const ParameterPack& input){
       std::vector<double> kr, xr;
       dokappaRamp_ = input.readVector("ramp_kappa", ParameterPack::KeyType::Optional, kr);
-      if(dokappaRamp_){
-        FANCY_ASSERT(kr.size()%2 == 0, "kappa ramping needs to have an even number of elements in the vector");
-      }
-      else{
+      if(!dokappaRamp_){
         input.readNumber("kappa", ParameterPack::KeyType::Required, kappa_);
         kr = { 0, 1, kappa_, kappa_ };
       }
-      doxstarRamp = input.readVector("ramp_xstar", ParameterPack::KeyType::Optional, xr);
-      std::cout << doxstarRamp << std::endl; 
-      if(doxstarRamp){
-        FANCY_ASSERT(xr.size()%2 == 0, "xstar ramping needs to have an even number of elements in the vector");
-      }
-      else{
+      doxstarRamp_ = input.readVector("ramp_xstar", ParameterPack::KeyType::Optional, xr);
+      if(!doxstarRamp_){
         input.readNumber("xstar", ParameterPack::KeyType::Required, xstar_);
         xr = { 0, 1, xstar_, xstar_};
       }
@@ -61,7 +54,8 @@ class HarmonicPotential : public BiasFunction{
   private:
     real xstar_, kappa_, halfkappa_;
     RampedParameter xstar_ramp_, kappa_ramp_;
-    bool dokappaRamp_=0, doxstarRamp=0;
+    bool dokappaRamp_=0;
+    bool doxstarRamp_=0;
 };
 
 class LinearPotential : public BiasFunction{
