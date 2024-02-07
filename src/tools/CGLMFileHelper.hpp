@@ -119,7 +119,6 @@ static void binary_real_read(std::ifstream& fin, std::vector<real>& x, Vec3<std:
 }
 //this one is used for reading reals, must save/load with the same precision/endianness
 static bool readFileIntoArray(std::ifstream& fin, const Vec3<std::size_t>& size, Matrix3d<real>& data){
-    std::vector<real> f_in;
     Vec3<std::size_t> size_read;
     std::vector<real> data_read;
     binary_real_read(fin, data_read, size_read);
@@ -136,14 +135,15 @@ static bool readFileIntoArray(std::ifstream& fin, const Vec3<std::size_t>& size,
 }
 //this one is used for the array of states, uses char array internally because bool arrays can behave oddly
 static bool readFileIntoArray(std::ifstream& fin, const Vec3<std::size_t>& size, Matrix3d<char>& data){
-    std::vector<real> f_in;
     Vec3<std::size_t> size_read;
     std::vector<char> data_read;
     binary_char_read(fin, data_read, size_read);
     FANCY_ASSERT(size_read[0] == size[0] && size_read[1] == size[1] && size_read[2] == size[2], "sizes do not match");
     data.initialize(size_read);
     for(int i = 0; i < data_read.size(); i++){
-        data.at_1d(i) = data_read[i];
+        Vec3<std::size_t> pos = data.map1N(i);
+        auto new_idx = data.mapN1(pos);
+        data.at(pos) = data_read[i];
     }
     return 0;
 }
