@@ -89,6 +89,7 @@ void Simulation::run(){
     //sweep
     sweep();
   }
+  output_.finalize_output(this, current_sweep_);
   //output_.close_outputs();
   return;
 }

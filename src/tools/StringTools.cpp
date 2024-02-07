@@ -18,6 +18,7 @@ bool stringToBool(const std::string& str)
     FANCY_ASSERT( false,
       "unable to interpret '" << str << "' as as true/yes/1 or false/no/0: check your input." );
   }
+  return false;
 }
 
 

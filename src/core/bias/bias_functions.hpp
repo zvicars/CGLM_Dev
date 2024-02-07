@@ -9,7 +9,9 @@ class BiasFunction{
     virtual void sweepUpdate(real time){
       return;
     }
+    virtual std::string printParams() const = 0;
 };
+
 class HarmonicPotential : public BiasFunction{
   public:
     HarmonicPotential(const ParameterPack& input){
@@ -50,7 +52,9 @@ class HarmonicPotential : public BiasFunction{
     virtual real operator()(real x, real dx){
       return kappa_*dx*(x - xstar_ + 0.5*dx);
     }
-
+    std::string printParams() const {
+      return std::to_string(kappa_) + "  " + std::to_string(xstar_);
+    }
   private:
     real xstar_, kappa_, halfkappa_;
     RampedParameter xstar_ramp_, kappa_ramp_;
@@ -75,6 +79,9 @@ class LinearPotential : public BiasFunction{
     virtual real operator()(real x, real dx){
       return phi_*dx;
     }
+    std::string printParams() const {
+      return std::to_string(phi_);
+    }
   private:
     real phi_;
 };
@@ -93,7 +100,10 @@ class HarmonicPlusLinear : public BiasFunction{
     //u2-u1 for a change of dn
     virtual real operator()(real x, real dx){
       return p1(x, dx) + p2(x,dx);
-    }    
+    }
+    std::string printParams() const {
+      return p1.printParams() + "  " + p2.printParams();
+    }
   protected:
   LinearPotential p1;
   HarmonicPotential p2;

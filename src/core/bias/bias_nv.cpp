@@ -17,6 +17,9 @@ std::string Bias_Nv::printStepOutput(std::string s){
     std::string s_post = s.substr(s.find('.')+1);
     return pv_->printStepOutput(s_post);    
   }
+  if(s.find("params" == 0)){
+    return bf_->printParams();
+  }
   FANCY_ASSERT(0, "invalid output type specified");
   return "";
 }

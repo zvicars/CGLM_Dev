@@ -45,18 +45,20 @@ class OutputHandler{
       p.readNumber("end_traj", ParameterPack::KeyType::Optional, end_traj_);
       p.readNumber("freq_traj", ParameterPack::KeyType::Optional, freq_traj_);
       p.readString("output_traj", ParameterPack::KeyType::Required, ofile_traj_);
+      p.readString("final_config", ParameterPack::KeyType::Optional, ofile_final_);
       ofile_handle_traj_ = new std::ofstream(ofile_traj_, std::ios::binary);      
       return;
     }
     void output_ts(Simulation* sim, std::uint64_t step);
     void output_traj(Simulation* sim, std::uint64_t step);
+    void finalize_output(Simulation* sim, std::uint64_t step);
     void close_outputs(){
       ofile_handle_ts_->close();
       ofile_handle_traj_->close();
     }
   private:
     std::vector<std::string> output_commands_;
-    std::string ofile_ts_, ofile_traj_;
+    std::string ofile_ts_, ofile_traj_, ofile_final_;
     uint64_t begin_ts_ = 0, end_ts_ = std::numeric_limits<uint64_t>::max(), freq_ts_ = 1;
     uint64_t begin_traj_ = 0, end_traj_ = std::numeric_limits<uint64_t>::max(), freq_traj_ = 1;
     std::ofstream* ofile_handle_ts_, * ofile_handle_traj_;

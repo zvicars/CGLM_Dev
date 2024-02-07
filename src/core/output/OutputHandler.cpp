@@ -55,3 +55,23 @@ void OutputHandler::output_traj(Simulation* sim, std::uint64_t step){
   binary_char_write(*ofile_handle_traj_, state_out, size);
   return;
 };
+
+
+void OutputHandler::finalize_output(Simulation* sim, std::uint64_t step){
+  if(ofile_final_.empty()) return;
+  std::ofstream final(ofile_final_);
+  auto size = sim->lattice_->size();
+  int size_1d = size[0]*size[1]*size[2];
+  std::vector<char> state_out;
+  state_out.reserve(size_1d);
+  std::size_t idx = 0; 
+  Matrix3d<char> temp(size);
+  temp.fill(0.0);
+  for(int i = 0; i < size_1d; i++){
+    auto pos = temp.map1N(i);
+    if(sim->lattice_->getState(pos)) state_out.push_back('1');
+    else state_out.push_back('0');
+  }
+  binary_char_write(final, state_out, size); 
+  final.close();
+}
