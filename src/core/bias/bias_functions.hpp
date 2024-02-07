@@ -23,6 +23,7 @@ class HarmonicPotential : public BiasFunction{
         kr = { 0, 1, kappa_, kappa_ };
       }
       doxstarRamp = input.readVector("ramp_xstar", ParameterPack::KeyType::Optional, xr);
+      std::cout << doxstarRamp << std::endl; 
       if(doxstarRamp){
         FANCY_ASSERT(xr.size()%2 == 0, "xstar ramping needs to have an even number of elements in the vector");
       }
