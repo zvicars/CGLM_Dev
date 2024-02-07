@@ -138,8 +138,8 @@ static bool readFileIntoArray(std::ifstream& fin, const Vec3<std::size_t>& size,
 static bool readFileIntoArray(std::ifstream& fin, const Vec3<std::size_t>& size, Matrix3d<char>& data){
     std::vector<real> f_in;
     Vec3<std::size_t> size_read;
-    std::vector<bool> data_read;
-    binary_bool_read(fin, data_read, size_read);
+    std::vector<char> data_read;
+    binary_char_read(fin, data_read, size_read);
     FANCY_ASSERT(size_read[0] == size[0] && size_read[1] == size[1] && size_read[2] == size[2], "sizes do not match");
     data.initialize(size_read);
     for(int i = 0; i < data_read.size(); i++){
