@@ -24,7 +24,7 @@ class HarmonicPotential : public BiasFunction{
       }
       doxstarRamp = input.readVector("ramp_xstar", ParameterPack::KeyType::Optional, xr);
       if(doxstarRamp){
-        FANCY_ASSERT(xr.size() == 4, "xstar ramping needs to have an even number of elements in the vector");
+        FANCY_ASSERT(xr.size()%2 == 0, "xstar ramping needs to have an even number of elements in the vector");
       }
       else{
         input.readNumber("xstar", ParameterPack::KeyType::Required, xstar_);
