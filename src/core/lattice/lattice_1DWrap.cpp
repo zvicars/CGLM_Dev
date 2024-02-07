@@ -166,6 +166,13 @@ bool Lattice_1DWrap::loadFileIntoDataArray(string filename, Matrix3d<char>& fiel
   std::ifstream ifile(filename, std::ios::binary);
   FANCY_ASSERT(ifile.is_open(), "failed to open input file, " + filename);
   readFileIntoArray(ifile, size_, field);
+  //map ascii to numbers, a consequence of maintaining legibility
+  #pragma omp parallel for
+  for(int i=0; i<field.size_1d(); i++){
+    auto& entry = field.at_1d(i);
+    if(entry == '1') entry = 1;
+    else if(entry == '0') entry = 0;
+  }
   ifile.close();
   return 0;
 }
