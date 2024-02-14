@@ -120,7 +120,7 @@ int main (int argc, char** argv){
       i++;
       continue;
     }
-    if(arg == "int"){
+    if(arg == "-int"){
       FANCY_ASSERT(argc >= i+2, "not enough input arguments for -int, need -o yes/no/y/n");
       std::string arg = argv[i+1];
       if(arg.find('y') == 0) integrate = 1;
