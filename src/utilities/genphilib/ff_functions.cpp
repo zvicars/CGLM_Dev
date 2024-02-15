@@ -20,48 +20,66 @@ real LJ_6_12_offset(Vec3<real> x, Vec3<real> xref, Vec3<real> size, Vec<real> pa
   return LJ_6_12(r, params[0], params[1]);
 }
 
+//probably not the most efficient algorithm, but it works...
+real LJ_6_12_offset_cylinder(Vec3<real> x, Vec3<real> xref, Vec3<real> size, Vec<real> params){
+  //params are epsilon, sigma, r, h, and axis
+  real eval = 0.0;
+  int axis = std::round(params[4]);
+  real epsilon = params[0], sigma = params[1], r_cyl = params[2], r2_cyl = params[2]*params[2], h = params[3];
+  real r2 = 0.0;
+  for(int i = 0; i < 3; i++){
+    if(i == axis) continue;
+    r2 += (x[i] - xref[i])*(x[i] - xref[i]);
+  }
+  //first, check if point is within cylinder
+  if(r2 <= r2_cyl && x[axis] - xref[axis] <= h && x[axis] - xref[axis] >= 0) return 100.0;
+  //if not, compute closest distance
+  real r = std::sqrt(r2);
+  real rd = r - r_cyl; //radial distance to radial extent of cylinder
+  //if it's within the cylinder height, closest distance will be distance to exterior of cylinder
+  if(x[axis] - xref[axis] <= h && x[axis] - xref[axis] >= 0){
+    return LJ_6_12(rd, epsilon, sigma); //can't be < 0 because of previous condition
+  }
+  real vd2t = x[axis] - xref[axis] - h; //vertical distance to top circle
+  real vd2b = x[axis] - xref[axis]; //vertical distance to bottom circle
+  real top_distance=0.0, bottom_distance=0.0;
+  if(rd < 0){ //if it's within the circle radius, it's the distance along the axis
+    top_distance = vd2t;
+    bottom_distance = vd2b;
+  }
+  else{ //if it's outside the radius, it's the hypotenuse of the r and y component
+    top_distance = std::sqrt( (vd2t*vd2t) + (rd*rd) );
+    bottom_distance = std::sqrt( (vd2b*vd2b) + (rd*rd) );
+  }
+
+  return LJ_6_12(std::min(top_distance, bottom_distance), epsilon, sigma); //return the minimum of these values
+}
+
 //https://stackoverflow.com/questions/5254838/calculating-distance-between-a-point-and-a-rectangular-box-nearest-point
-real nearestDistanceToBox(Vec3<real> p, Vec3<real> min, Vec3<real> max, Vec3<real> size){
-  Vec3<real> pos_distances = {0.0, 0.0, 0.0};
+real nearestDistanceToBox(Vec3<real> p, Vec3<real> xref, Vec3<real> min, Vec3<real> max, Vec3<real> size){
+  Vec3<real> dx;
+  getNearestImage3D(p, xref, size);
   for(int i = 0; i < 3; i++){
-    //find nearest boundary
-    if(p[i] >= min[i] && p[i] <= max[i]) continue; //it's inside, distance is 0
-    real mindist = min[i] - getNearestImage1D(p[i], min[i], size[i]);
-    real maxdist = getNearestImage1D(p[i], max[i], size[i]) - max[i];
-    if(mindist > 0.0 || maxdist > 0.0){
-      if(mindist < 0.0) pos_distances[i] = maxdist;
-      else pos_distances[i] = mindist;
-    }
+    dx[i] = std::max(min[i]-p[i], std::max(0.0, p[i]-max[i]));
   }
-  real sum = 0.0;
-  for(int i = 0; i < 3; i++){
-    //std::cout << "xdist = " << pos_distances[0] << " ydist = " << pos_distances[1] << " zdist = " << pos_distances[2] << std::endl;
-    sum += pos_distances[i]*pos_distances[i];
-  }
-  sum = std::sqrt(sum);
-  return sum;
+  return norm2(dx);
 }
 
 real LJ_Box(Vec3<real> x, Vec3<real> xref, Vec3<real> size, Vec<real> params){
   //models cuboidal volume with lj component computed based on nearest distance to surface
   //params are epsilon, sigma, dx, dy, dz
   Vec3<real> dx;
-  dx[0] = params[2];
-  dx[1] = params[3];
-  dx[2] = params[4];
+  for(std::size_t i = 0; i < 3; i++){
+    dx[i] = params[i+2];
+  }
   auto xmin = xref - dx;
   auto xmax = xref + dx;
-  for(int i = 0; i < 3; i++){
-    if(xmin[i] < 0 ) xmin[i] = 0;
-    if(xmax[i] > size[i]) xmax[i] = size[i];
-  }
+  //for(int i = 0; i < 3; i++){
+  //  if(xmin[i] < 0 ) xmin[i] = 0;
+  //  if(xmax[i] > size[i]) xmax[i] = size[i];
+  //}
   //get shortest distance to 
-  auto r = nearestDistanceToBox(x, xmin, xmax, size);
-  //std::cout << x[0] << "  " << x[1] << "  " << x[2] << std::endl;
-  //std::cout << dx[0] << "  " << dx[1] << "  " << dx[2] << std::endl;
-  //std::cout << xmin[0] << "  " << xmin[1] << "  " << xmin[2] << std::endl;
-  //std::cout << xmax[0] << "  " << xmax[1] << "  " << xmax[2] << std::endl;
-  //std::cin.get();
-  if(r == 0.0 ) return 100.0;
+  auto r = nearestDistanceToBox(x, xref, xmin, xmax, size);
+  if(r <= 0.0) return 100.0;
   return LJ_6_12(r, params[0], params[1]);
 }

@@ -27,6 +27,10 @@ struct AtomFF{
     else if(funct == 3){
       funct_ptr = *LJ_Box;
     }
+    //cylinder-shaped particles
+    else if(funct == 4){
+      funct_ptr= *LJ_6_12_offset_cylinder;
+    }
     else throw 1;
     return;
   }
