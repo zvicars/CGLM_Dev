@@ -12,7 +12,7 @@ real computePhiForSingleCell(const Vec3<std::size_t>& index, const Vec3<std::siz
     point[i] = ((real)index[i]+0.5)*spacing; //place test point in middle of lattice cell
     size[i] = box_size[i]*spacing;
   }
-  eval = atom_in.funct_ptr(point, atom_in.x, size, atom_in.params);
+  eval = atom_in.funct_ptr(point, atom_in.x, size, atom_in.cutoff, atom_in.params);
   return eval;
 }
 
@@ -29,7 +29,7 @@ real computePhiForSingleCellIntegrated(const Vec3<std::size_t>& index, const Vec
   for(real j = 0.0; j <= 1.0; j+=0.2){
   for(real k = 0.0; k <= 1.0; k+=0.2){
         Vec3<real> new_point = point + spacing*Vec3<real>{i,j,k};
-        real tempEval = atom_in.funct_ptr(new_point, atom_in.x, size, atom_in.params);
+        real tempEval = atom_in.funct_ptr(new_point, atom_in.x, size, atom_in.cutoff, atom_in.params);
         real weight = 1;//exp(-tempEval);
         eval += weight*tempEval; 
         counter+=weight;
@@ -64,7 +64,7 @@ void computePhiField(Matrix3d<real>& phi, const Vec<AtomFF>& atoms, Vec3<std::si
     for(int i = 0; i < 3; i++){
       min[i] = at_idx[i] - range;
       max[i] = at_idx[i] + range;
-      if(max[i] - min[i] > 0.5*box_size[i]){
+      if(max[i] - min[i] > 0.5*box_size[i] || atom.funct != 1){
         min[i] = 0;
         max[i] = box_size[i]-1;
       }
