@@ -25,9 +25,9 @@ real computePhiForSingleCellIntegrated(const Vec3<std::size_t>& index, const Vec
   }
   real eval=0.0;
   real counter = 0.0;
-  for(real i = 0.0; i <= 1.0; i+=0.2){
-  for(real j = 0.0; j <= 1.0; j+=0.2){
-  for(real k = 0.0; k <= 1.0; k+=0.2){
+  for(real i = 0.0; i <= 1.0; i+=0.5){
+  for(real j = 0.0; j <= 1.0; j+=0.5){
+  for(real k = 0.0; k <= 1.0; k+=0.5){
         Vec3<real> new_point = point + spacing*Vec3<real>{i,j,k};
         real tempEval = atom_in.ff->compute(point);
         real weight = 1;//exp(-tempEval);
@@ -57,10 +57,7 @@ void computePhiField(Matrix3d<real>& phi, const Vec<AtomFF>& atoms, Vec3<std::si
     size[i] = box_size[i]*spacing;
   }
   //get the range of cells to consider
-  int counter = 0;
   for(auto& atom : atoms){
-    std::cout << counter << "  ";
-    counter++;
     Vec<real> bounding_box = atom.ff->getBoundingBox();
     int range = atom.cutoff / spacing  + 1;
     Vec3<int> min, max;
