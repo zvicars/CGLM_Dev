@@ -57,7 +57,10 @@ void computePhiField(Matrix3d<real>& phi, const Vec<AtomFF>& atoms, Vec3<std::si
     size[i] = box_size[i]*spacing;
   }
   //get the range of cells to consider
+  int counter = 0;
   for(auto& atom : atoms){
+    std::cout << counter << "  ";
+    counter++;
     Vec<real> bounding_box = atom.ff->getBoundingBox();
     int range = atom.cutoff / spacing  + 1;
     Vec3<int> min, max;
