@@ -3,7 +3,7 @@
 #include <sstream>
 #include "../../tools/StringTools.hpp"
 #include "../../tools/CGLMFileHelper.hpp"
-void loadAtoms(std::string filename, Vec<AtomFF>& atoms){
+void loadAtoms(std::string filename, Vec<AtomFF>& atoms, Vec3<real> size){
   atoms.clear();
   std::ifstream ifile(filename);
   FANCY_ASSERT(ifile.is_open(), "failed to open input file");
@@ -24,7 +24,7 @@ void loadAtoms(std::string filename, Vec<AtomFF>& atoms){
     while(ss >> temp){
       params.push_back(temp);
     }
-    atoms.push_back(AtomFF(pos, cutoff, funct, params));
+    atoms.push_back(AtomFF(pos, cutoff, funct, params, size));
   }
   return;
 }

@@ -12,7 +12,7 @@ real computePhiForSingleCell(const Vec3<std::size_t>& index, const Vec3<std::siz
     point[i] = ((real)index[i]+0.5)*spacing; //place test point in middle of lattice cell
     size[i] = box_size[i]*spacing;
   }
-  eval = atom_in.funct_ptr(point, atom_in.x, size, atom_in.cutoff, atom_in.params);
+  eval = atom_in.ff->compute(point);
   return eval;
 }
 
@@ -29,7 +29,7 @@ real computePhiForSingleCellIntegrated(const Vec3<std::size_t>& index, const Vec
   for(real j = 0.0; j <= 1.0; j+=0.2){
   for(real k = 0.0; k <= 1.0; k+=0.2){
         Vec3<real> new_point = point + spacing*Vec3<real>{i,j,k};
-        real tempEval = atom_in.funct_ptr(new_point, atom_in.x, size, atom_in.cutoff, atom_in.params);
+        real tempEval = atom_in.ff->compute(point);
         real weight = 1;//exp(-tempEval);
         eval += weight*tempEval; 
         counter+=weight;
@@ -58,13 +58,13 @@ void computePhiField(Matrix3d<real>& phi, const Vec<AtomFF>& atoms, Vec3<std::si
   }
   //get the range of cells to consider
   for(auto& atom : atoms){
+    Vec<real> bounding_box = atom.ff->getBoundingBox();
     int range = atom.cutoff / spacing  + 1;
-    Vec3<int> at_idx = pos2idx(atom.x, size, spacing);
     Vec3<int> min, max;
     for(int i = 0; i < 3; i++){
-      min[i] = at_idx[i] - range;
-      max[i] = at_idx[i] + range;
-      if(max[i] - min[i] > 0.5*box_size[i] || atom.funct != 1){
+      min[i] = std::round(bounding_box[i] / spacing) - 1;
+      max[i] = std::round(bounding_box[i+3] / spacing) + 1;
+      if(max[i] - min[i] > 0.5*box_size[i]){
         min[i] = 0;
         max[i] = box_size[i]-1;
       }
@@ -131,9 +131,16 @@ int main (int argc, char** argv){
     }
   }  
 
+  //size computation, needed when defining atoms (kludgy, but WIP)
+  Vec3<std::size_t> box_size = {box_x, box_y, box_z};
+  Vec3<real> size;
+  for(int i=0; i<3; i++){
+    size[i] = (real)box_size[i]*spacing;
+  }
+
   Matrix3d<real> phi;
   Vec<AtomFF> atoms;
-  loadAtoms(input_file, atoms);
+  loadAtoms(input_file, atoms, size);
   computePhiField(phi, atoms, {box_x, box_y, box_z}, spacing, integrate);
   writePhiField(output_file, phi);
   return 0;
