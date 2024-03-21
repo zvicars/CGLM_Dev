@@ -37,7 +37,6 @@ real computePhiForSingleCellIntegrated(const Vec3<std::size_t>& index, const Vec
         Vec3<real> ref_point = point + (starting_point*spacing); //place point in middle of cell if npoints = 1 
         Vec3<real> rel_pos = {(real)i * point_spacing, (real)j * point_spacing, (real)k * point_spacing};
         Vec3<real> new_point = ref_point + spacing*rel_pos;
-        std::cin.get();
         real tempEval = atom_in.ff->compute(new_point);
         real weight = 1;
         //real weight = exp(-tempEval);
