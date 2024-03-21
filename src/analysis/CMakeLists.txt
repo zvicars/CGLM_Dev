@@ -8,10 +8,12 @@ target_sources(analysis PRIVATE
  calculations/Calc_Isosurface.cpp
  calculations/Calc_LeeNP.cpp
  calculations/Calc_PhiFromLiqDens.cpp
+ calculations/Calc_WriteTraj.cpp
  modifiers/Modifier.cpp
  modifiers/Mod_UsePhi.cpp
  modifiers/Mod_AvgWithActivation.cpp
  modifiers/Mod_SetInRegion.cpp
+ modifiers/Mod_COMCorrectPillar.cpp
  factory.cpp
  AnalysisInputPack.cpp
 )
