@@ -235,7 +235,6 @@ Vec<real> LJ_3_9_offset_cylinder::getBoundingBox() const{
 LJ_3_9_offset_box::LJ_3_9_offset_box(Vec3<real> xref, Vec3<real> size, real cutoff, Vec<real> params) : FF_function(xref, size, cutoff, params){
   epsilon_ = params[0];
   sigma_ = params[1];
-  offset_ = params[2];
   Vec3<real> dx;
   for(std::size_t i = 0; i < 3; i++){
     dx[i] = params[i+2];

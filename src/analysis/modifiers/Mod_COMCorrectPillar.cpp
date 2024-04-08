@@ -53,7 +53,7 @@ void Mod_COMCorrectPillar::offset(Matrix3d<real>& lattice, Vec3<int> offset){
     auto pos3d = lattice_temp.map1N(i);
     Vec3<std::size_t> pos3d_offset;
     for(int j = 0; j < 3; j++){
-      pos3d_offset[i] = wrapIndex(pos3d[i] + offset[i], box_size[i]);
+      pos3d_offset[j] = wrapIndex(pos3d[j] + offset[j], box_size[j]);
     }
     lattice.at(pos3d_offset) = lattice_temp.at(pos3d);
   }

@@ -71,7 +71,7 @@ public:
     real compute(Vec3<real> x) const;
     virtual Vec<real> getBoundingBox() const;
 private:
-  real sigma_, epsilon_, offset_;
+  real sigma_, epsilon_;
   Vec3<real> xmin_, xmax_;
 };
 

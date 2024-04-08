@@ -19,8 +19,15 @@ bool nextFrame(Box& box_ptr, std::ifstream& box_file){
   std::vector<char> states_temp;
   Vec3<std::size_t> size_temp;
   bool fail = readFrameBinary(size_temp, states_temp, box_file);
+  for(auto size : size_temp){
+    if(size > 1000000){
+      std::cout << "unreasonable box size" << std::endl;
+      return 0;
+    }
+  }
+  if(fail) return 0;
   box_ptr.setLattice(states_temp, size_temp);
-  return !fail; 
+  return 1; 
 }
 
 bool readPhi(Box& box_ptr, std::ifstream& phi_file){
@@ -53,7 +60,6 @@ int main(int argc, char **argv)
   AnalysisInputPack master_input_pack = AnalysisInputPack(&master_pack, &b1);
 
   std::vector<AnalysisInputPack> mod_packs = master_input_pack.buildDerivedInputPacks("Modifier");
-  FANCY_ASSERT(mod_packs.size() > 0, "No atom groups specified.");
   for(std::size_t i = 0; i < mod_packs.size(); i++){
     std::string type, name;
     mod_packs[i].params().readString("type", ParameterPack::KeyType::Required, type);

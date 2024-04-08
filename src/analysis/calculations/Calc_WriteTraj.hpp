@@ -10,5 +10,5 @@ public:
   virtual void update();
 protected:
   virtual void printOutput();
-  std::ofstream ofile;
+  std::ofstream ofile_;
 };
