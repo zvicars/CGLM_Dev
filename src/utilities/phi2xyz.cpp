@@ -2,6 +2,7 @@
 #include "../tools/Matrix.hpp"
 #include <limits>
 #include <iostream>
+
 bool readFrameBinary(Vec3<std::size_t>& size, Vec<real>& states, std::ifstream& ifile){
   binary_real_read(ifile, states, size);
   return ifile.fail();
@@ -15,7 +16,7 @@ bool writeFrameXYZ(Vec3<std::size_t>& size, Vec<real>& states, std::ofstream& of
   ofile << "generated from phi2xyz" << std::endl;
   for(int i = 0; i < states.size(); i++){
     auto idx = newMat.map1N(i); 
-      ofile << "CELL  " << idx[0] << "  " << idx[1] << "  " << idx[2] << "  " << states[i] << "\n"; 
+      ofile << "C " << idx[0] << " " << idx[1] << " " << idx[2] << " " << states[i] << "\n"; 
   }
   return 0;
 }
@@ -39,6 +40,7 @@ int main(int argc, char** argv){
   int counter = 0; 
   std::ifstream ifile(file_in, std::ios::binary);
   std::ofstream ofile(file_out);
+  ofile.precision(3);
   if(!ofile.is_open()){
     std::cout << "failed to open output file" << std::endl;
     throw 1;

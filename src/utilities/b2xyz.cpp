@@ -16,10 +16,10 @@ bool writeFrameXYZ(Vec3<std::size_t>& size, Vec<char>& states, std::ofstream& of
   for(int i = 0; i < states.size(); i++){
     auto idx = newMat.map1N(i); 
     if(states[i] == '1'){
-      ofile << "LIQ  " << idx[0] << "  " << idx[1] << "  " << idx[2] << "\n"; 
+      ofile << "L " << idx[0] << " " << idx[1] << " " << idx[2] << "\n"; 
     }
     else{
-      ofile << "VAP  " << idx[0] << "  " << idx[1] << "  " << idx[2] << "\n"; 
+      ofile << "V " << idx[0] << " " << idx[1] << " " << idx[2] << "\n"; 
     }
   }
   return 0;
