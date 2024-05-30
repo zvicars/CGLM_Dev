@@ -143,7 +143,7 @@ void Calc_LeeNP::finalOutput(){
   std::size_t size1 = internalLattice.size()[axis1_];
   std::size_t size2 = internalLattice.size()[axis2_];
   real test_pos = size+10;
-  #pragma omp parallel for unroll(2)
+  #pragma omp parallel for
   for(std::size_t i = 0; i < size1; i++){
     for(std::size_t j = 0; j < size2; j++){
       std::array<std::size_t, 2> idx = {i,j};

@@ -6,6 +6,7 @@ target_sources(analysis PRIVATE
  probevolumes/PV_Simple.cpp
  calculations/Calculation.cpp
  calculations/Calc_Isosurface.cpp
+ calculations/Calc_IsosurfaceMultiphase.cpp
  calculations/Calc_LeeNP.cpp
  calculations/Calc_PhiFromLiqDens.cpp
  calculations/Calc_WriteTraj.cpp
@@ -14,7 +15,9 @@ target_sources(analysis PRIVATE
  modifiers/Mod_AvgWithActivation.cpp
  modifiers/Mod_SetInRegion.cpp
  modifiers/Mod_COMCorrectPillar.cpp
+ modifiers/Mod_LoadPhi.cpp
+ modifiers/Mod_Gaussian.cpp
  factory.cpp
  AnalysisInputPack.cpp
 )
-target_compile_options(analysis PRIVATE -O3)
+target_compile_options(analysis PRIVATE -O3 -fopenmp)
