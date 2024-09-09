@@ -2,6 +2,7 @@
 #include "../../tools/SimpleForcefields.hpp"
 #include "../../tools/stlmath.hpp"
 #include "../../tools/pbcfunctions.hpp"
+#include "ellipseFunctions.hpp"
 #include <iostream>
 
 //https://stackoverflow.com/questions/5254838/calculating-distance-between-a-point-and-a-rectangular-box-nearest-point
@@ -255,4 +256,56 @@ real LJ_3_9_offset_box::compute(Vec3<real> x) const{
 
 Vec<real> LJ_3_9_offset_box::getBoundingBox() const{
   return getBoxBounds(xmin_, xmax_, cutoff_);
+}
+
+
+LJ_3_9_offset_ellipse::LJ_3_9_offset_ellipse(Vec3<real> xref, Vec3<real> size, real cutoff, Vec<real> params) : FF_function(xref, size, cutoff, params){
+  epsilon_ = params[0];
+  sigma_ = params[1];
+  //quatw quati quatj quatk shapex shapey shapez
+  Vec4<real> qc;
+  for(int i = 0; i < 4; i++){
+    qc[i] = params[i+2];
+  }
+  for(int i = 0; i < 3; i++){
+    shape_[i] = params[i+6];
+  }
+  
+  //convert quaternion to rotation matrix
+  rotationMatrix_[0][0] = 2*(qc[0]*qc[0] + qc[1]*qc[1]) - 1 ;
+  rotationMatrix_[1][0] = 2*(qc[1]*qc[2] + qc[0]*qc[3]     );
+  rotationMatrix_[2][0] = 2*(qc[1]*qc[3] - qc[0]*qc[2]     );
+  rotationMatrix_[0][1] = 2*(qc[1]*qc[2] - qc[0]*qc[3]     );
+  rotationMatrix_[1][1] = 2*(qc[0]*qc[0] + qc[2]*qc[2]) - 1 ;
+  rotationMatrix_[2][1] = 2*(qc[2]*qc[3] + qc[0]*qc[1]     );
+  rotationMatrix_[0][2] = 2*(qc[1]*qc[3] + qc[0]*qc[2]     );
+  rotationMatrix_[1][2] = 2*(qc[2]*qc[3] - qc[0]*qc[1]     );
+  rotationMatrix_[2][2] = 2*(qc[0]*qc[0] + qc[3]*qc[3]) - 1 ;
+  return;
+}
+
+real LJ_3_9_offset_ellipse::compute(Vec3<real> x) const{
+  //models cuboidal volume with lj component computed based on nearest distance to surface
+  //params are epsilon, sigma, dx, dy, dz
+  Vec3<real> p = x;
+  getNearestImage3D(p, xref_, size_);
+  auto rvec = p - xref_;
+  auto rcol = arr2Col(rvec);
+  auto rcol_rotated = matrix_mult(rotationMatrix_, rcol);
+  Vec3<real> rvec_rotated = col2Arr(rcol_rotated);
+  real func_eval = ellipsoidEquation(rvec_rotated, shape_);
+  if(func_eval < 0) return 100.0; //if inside ellipse, return max val
+  Vec3<real> p_near = nearestPointOnEllipsoid(rvec_rotated, shape_);
+  auto dr = rvec_rotated - p_near;
+  real distance = norm2(dr);
+  if(distance > cutoff_) return 0.0;
+  return LJ_3_9(distance, epsilon_, sigma_);
+}
+
+Vec<real> LJ_3_9_offset_ellipse::getBoundingBox() const{
+  real max_size = shape_[0];
+  if(shape_[1] > max_size) max_size = shape_[1];
+  if(shape_[2] > max_size) max_size = shape_[2];
+  auto bounds = getSphereBounds(xref_, max_size + cutoff_);
+  return bounds;
 }

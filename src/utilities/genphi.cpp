@@ -4,6 +4,7 @@
 #include "../tools/stlmath.hpp"
 #include "../tools/pbcfunctions.hpp"
 #include <fstream>
+#include <omp.h>
 real computePhiForSingleCell(const Vec3<std::size_t>& index, const Vec3<std::size_t>& box_size, real spacing, const AtomFF& atom_in){
   real eval=0.0;
   Vec3<real> point;
@@ -66,7 +67,10 @@ void computePhiField(Matrix3d<real>& phi, const Vec<AtomFF>& atoms, Vec3<std::si
     size[i] = box_size[i]*spacing;
   }
   //get the range of cells to consider
+  int counter = 0;
   for(auto& atom : atoms){
+    std::cout << counter << std::endl;
+    counter++;
     Vec<real> bounding_box = atom.ff->getBoundingBox();
     int range = atom.cutoff / spacing  + 1;
     Vec3<int> min, max;
@@ -78,6 +82,7 @@ void computePhiField(Matrix3d<real>& phi, const Vec<AtomFF>& atoms, Vec3<std::si
         max[i] = box_size[i]-1;
       }
     }
+    #pragma omp parallel for
     for(int i = min[0]; i <= max[0]; i++){
       for(int j = min[1]; j <= max[1]; j++){
         for(int k = min[2]; k <= max[2]; k++){

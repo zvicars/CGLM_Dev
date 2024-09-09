@@ -4,6 +4,6 @@ add_library (TOOLS STATIC
   StringTools.cpp
 )
 target_include_directories(TOOLS PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_compile_options(TOOLS PRIVATE -fPIC)
+target_compile_options(TOOLS PRIVATE -fPIC -g)
 
 add_subdirectory(test)

@@ -1,6 +1,6 @@
 #pragma once
 #include "../../tools/typedefs.hpp"
-
+#include "../../tools/Matrix.hpp"
 
 class FF_function{
 public:
@@ -85,6 +85,20 @@ private:
   real sigma_, epsilon_, offset_, height_;
   int axis_;
 };
+
+class LJ_3_9_offset_ellipse : public FF_function{
+public:
+    LJ_3_9_offset_ellipse(Vec3<real> x_ref, Vec3<real> size, real cutoff, Vec<real> params);
+    real compute(Vec3<real> x) const;
+    virtual Vec<real> getBoundingBox() const;
+private:
+  real sigma_, epsilon_, offset_;
+  //LAMMPS outputs a quaternion which should be convertible to a rotation matrix that orients a point in world-space to the object-space
+  Vec3<Vec3<real>> rotationMatrix_;
+  Vec3<real> shape_;
+  int axis_;
+};
+
 
 //real (*funct_ptr)(Vec3<real>, Vec3<real>, Vec<real>)
 //params: epsilon, sigma, cutoff

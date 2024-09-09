@@ -60,6 +60,9 @@ struct AtomFF{
     else if(funct == 7){
       ff = new LJ_6_12_offset_cylinder(x, size, cutoff, params);
     }
+    else if(funct == 8){
+      ff = new LJ_3_9_offset_ellipse(x, size, cutoff, params);
+    }
     else throw 1;
   }
 };

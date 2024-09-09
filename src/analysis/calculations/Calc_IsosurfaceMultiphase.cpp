@@ -153,6 +153,8 @@ void Calc_IsosurfaceMultiphase::output(){
         }
       }
       //compute areas
+      //for each triangle of mesh 1
+      //loop over contributions from other meshes and add vertexStateMatrix values
       for(std::size_t i = 0; i < ng; i++){
         std::array<std::size_t, 2> ii = {i,i};
         for(int j = 0; j < meshes_[i].ntri; j++){
