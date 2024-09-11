@@ -27,5 +27,6 @@ protected:
   std::vector<std::string> hex_colors_;
   std::vector<double> times_;
   std::vector<std::vector<double> > avecs_;
+  bool cons_areas_ = 0;
   bool outputPLY_ = 0;
 };
