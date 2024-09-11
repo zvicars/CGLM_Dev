@@ -159,6 +159,39 @@ void Calc_IsosurfaceMultiphase::output(){
           vertexCountMatrix.at(idx2d) = vertexNumNeighbors;
         }
       }
+
+      if(cons_areas_){
+        for(std::size_t j = 0; j < ng; j++){
+          const auto& active_mesh = meshes_[j]; 
+          for(std::size_t k = 0; k < active_mesh.nvtx; k++){
+            std::vector<real> counts(ng);
+            std::size_t group_max_idx = 0; 
+            for(std::size_t i = 0; i < ng; i++){
+              if(i == j) continue;
+              std::array<std::size_t, 2> idx2d = {i,j};
+              counts[i] = vertexCountMatrix.at(idx2d)[k];
+            }
+
+            //find max val
+            std::size_t max_idx = 0;
+            real max_val = 0;
+            for(std::size_t i = 0; i < ng; i++){
+              if(i == j) continue;
+              if(counts[i] > max_val){
+                max_val = counts[i]; 
+                max_idx = i;
+              }
+            }
+            for(std::size_t i = 0; i < ng; i++){
+              if(i == max_idx || i == j) continue;
+              std::array<std::size_t, 2> idx2d = {i,j};
+              vertexStateMatrix.at(idx2d)[k] = 0.0;
+            }
+
+          }
+        }
+      }
+
       //compute areas
       //for each triangle of mesh 1
       //loop over contributions from other meshes and add vertexStateMatrix values
@@ -181,44 +214,6 @@ void Calc_IsosurfaceMultiphase::output(){
           areaMatrix.at(ii) += area;
         }      
       }
-
-      //consolidate areas
-      //only keep the area with the highest number of neighbors
-      if(cons_areas_){
-        //for each group
-        for(std::size_t i = 0; i < ng; i++){
-          //loop over its triangles
-          for(int j = 0; j < meshes_[i].ntri; j++){
-            const auto& triangle = meshes_[i].triangles[j];
-            const auto& indices = triangle.indices; 
-            std::vector<real> total_num_neighbors(ng, 0.0);
-            for(std::size_t k = 0; k < ng; k++){
-              if(i == k) continue;
-              std::array<std::size_t, 2> ki = {k,i};
-              for(auto& index : indices){
-                total_num_neighbors[k] += vertexCountMatrix.at(ki)[index];
-              }
-            }
-            //find which group the given triangle has the most neighbors from
-            std::size_t max_index = 0;
-            real max_val = total_num_neighbors[0];
-            for(std::size_t k = 1; k < ng; k++){
-              if(max_val < total_num_neighbors[k]){
-                max_val = total_num_neighbors[k];
-                max_index = k;
-              }
-            }
-            //only keep contributions from that group in the area matrix
-            for(std::size_t k = 0; k < ng; k++){
-              if(i == k) continue;
-              std::array<std::size_t, 2> ki = {k,i};
-              if(k!=max_index){
-                areaMatrix.at(ki) == 0;
-              }
-            }
-          }
-        }      
-      }        
 
       if(outputPLY_){
         std::vector<RGB> rgb_colors(ng);
