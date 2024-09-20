@@ -22,4 +22,4 @@ target_sources(analysis PRIVATE
  factory.cpp
  AnalysisInputPack.cpp
 )
-target_compile_options(analysis PRIVATE -O0 -g -fopenmp)
+target_compile_options(analysis PRIVATE -O3 -g -fopenmp)
