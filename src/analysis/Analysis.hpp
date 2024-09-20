@@ -12,6 +12,11 @@ class AnalysisObject{
     input_ = &input;
     return;
   }
+  AnalysisObject(){
+    name_ = "";
+    type_ = "";
+    return;
+  }  
   string getName(){
     return name_;
   }

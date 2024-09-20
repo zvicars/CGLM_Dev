@@ -9,6 +9,9 @@ class ProbeVolume : public AnalysisObject{
 public:
   using KeyType = ParameterPack::KeyType;
   ProbeVolume(AnalysisInputPack& input);
+  ProbeVolume(){
+    return;
+  }
   virtual ~ProbeVolume(){
     return; 
   }
