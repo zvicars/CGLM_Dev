@@ -8,3 +8,5 @@ set(CMAKE_CXX_COMPILER g++)
 find_package(OpenMP)
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 add_subdirectory(src)
+
+install(TARGETS CGLM b2xyz phi2xyz genphi gro2phifile analysis DESTINATION bin)
