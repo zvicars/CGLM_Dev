@@ -1,0 +1,77 @@
+#the probe volume defines the region in which a biasing potential is applied
+ProbeVolume = {
+  name = pv
+  type = simple_rect
+  min = [ 10 10 10 ]
+  max = [ 40 40 40 ]
+}
+
+#the bias is a harmonic potential (0.5*kappa*(x-xstar)^2) which serves as the 
+#set-point for the number of liquid-like voxels desired in the system
+Bias = {
+  name = bias
+  type = nv
+  probevolume = pv
+  function = {
+    type = harmonic
+    xstar = 10000
+    kappa = 0.001
+  }
+}
+
+#choice of random number generator
+Random = {
+  name =  rng
+  type = mt19937
+}
+
+#definition of the simulation box, a 100x100x100 voxel grid is used
+#parameters epsilon, mu, and lambda chosen in accordance to Vaikuntanathan et. al.
+#to represent the interfacial thermodynamics and capillary wave fluctuations of 
+#liquid water
+Lattice = {
+  name = lattice
+  nonfixed_list = 1
+  nonfixed_list_threshold = 50
+  type = 1DWrap
+  size = [ 50 50 50 ]
+  epsilon = 1.35
+  mu = 4.05
+  lambda = 0.184
+  density = 1.0
+  hasStateField = 0
+  default_state = 0
+  generator = rng
+}
+
+#choice of Hamiltonian, here a simple lattice gas is used
+Hamiltonian = {
+  name = ham
+  type = lattice_gas
+  biases = [ bias ]
+}
+
+#simulation parameters defined here using other elements defined above
+Simulation = {
+  name = sim
+  type = default
+  lattice = lattice
+  rng = rng
+  hamiltonian = ham
+  sweeps = 5000
+  #information to output
+  #output a binary configuration every 100 steps for 1000 steps total
+  Output = {
+    args = [ h.bias[0].pv.nv ]
+    begin_ts = [ 0 ]
+    end_ts = [ 5000 ]
+    freq_ts = 1
+    #outputs number of liquid-like voxels
+    output_file = traj_out.txt
+    begin_traj = 0 
+    end_traj = 5000
+    freq_traj = 50
+    #trajectory output (binary file)
+    output_traj = traj_out.traj
+  }
+}

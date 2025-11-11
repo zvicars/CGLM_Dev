@@ -14,6 +14,7 @@ public:
   }
 protected:
   virtual void printOutput();
+  virtual void printOutputVerbose();
   //number of actual frames computed
   int frame_counter_=0;
   bool initialized_ = 0;
@@ -30,4 +31,5 @@ protected:
   Vec3<int> size_;
   ProbeVolume* pv_;
   bool haspv_=0, computeCurvature_=0;
+  bool printVerbose_=0;
 };

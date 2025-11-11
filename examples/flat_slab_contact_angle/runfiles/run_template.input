@@ -1,0 +1,95 @@
+ProbeVolume = {
+  name = pv
+  type = simple_rect
+  min = [ 0 0 0 ]
+  max = [ #NX1# #NY1# #NZ1# ]
+}
+ProbeVolume = {
+  name = pv2
+  type = simple_rect
+  min = [ 0 0 #NZ1BEGIN# ]
+  max = [ #NX1# #NY1# #NZ1END# ]
+}
+ProbeVolume = {
+  name = pv3
+  type = simple_rect
+  min = [ 0 0 #NZ2BEGIN# ]
+  max = [ #NX1# #NY1# #NZ2END# ]
+}
+
+Bias = {
+  name = bias
+  type = nv
+  probevolume = pv
+  function = {
+    type = harmonic
+    ramp_xstar = [ 0 2000 0 #XSTAR# ]
+    kappa = #KAPPA#
+  }
+}
+
+Bias = {
+  name = bias2
+  type = nv
+  probevolume = pv2
+  function = {
+    type = harmonic
+    xstar = 0.0
+    kappa = 0.0
+  }
+}
+
+Bias = {
+  name = bias3
+  type = nv
+  probevolume = pv3
+  function = {
+    type = harmonic
+    xstar = 0.0
+    kappa = 0.0
+  }
+}
+
+Random = {
+  name =  rng
+  type = mt19937
+}
+Lattice = {
+  name = lattice
+  nonfixed_list = 1
+  nonfixed_list_threshold = 50
+  type = 1DWrap
+  size = [ #NX# #NY# #NZ# ]
+  epsilon = 1.35
+  mu = 4.05
+  lambda = 0.184
+  density = 1.0
+  hasStateField = 0
+  default_state = 0
+  phi_file = in.phi
+  generator = rng
+}
+Hamiltonian = {
+  name = ham
+  type = lattice_gas
+  biases = [ bias bias2 bias3 ]
+}
+
+Simulation = {
+  name = sim
+  type = default
+  lattice = lattice
+  rng = rng
+  hamiltonian = ham
+  sweeps = 5000
+  Output = {
+    args = [ h.bias[0].pv.nv h.bias[1].pv.nv h.bias[2].pv.nv ]
+    begin_ts = [ 0 ]
+    freq_ts = 1
+    output_file = traj_out.txt
+    begin_traj = 0 
+    freq_traj = 250
+    output_traj = traj_out.traj
+    final_config = final.frame
+  }
+}

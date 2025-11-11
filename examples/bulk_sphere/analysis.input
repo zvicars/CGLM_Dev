@@ -1,0 +1,32 @@
+trajectory = traj_out.traj
+
+ProbeVolume = {
+  name = pv
+  type = rectilinear
+  x_range = [ 10 40 ]
+  y_range = [ 10 40 ]
+  z_range = [ 10 40 ]
+}
+
+#smooths out small voids for instantaneous interfaces
+Modifier = {
+  name = average
+  type = average
+  A = 1
+  B = 10
+  x0 = 0.6
+}
+
+Calculation = {
+  name = liq
+  type = isosurface
+  modifiers = [ average ]
+  probevolume = pv
+  output_frequency = 10
+  calculation_frequency = 1
+  equilibration = 0
+  end = 98
+  isovalue = 0.5
+  method = golosio
+  verbose = 1
+}

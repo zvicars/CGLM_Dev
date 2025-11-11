@@ -14,6 +14,7 @@ Calc_Isosurface::Calc_Isosurface(AnalysisInputPack& input):Calculation{input}
     FANCY_ASSERT(pv_ != 0, "probe volume not found");
   }
   input.params().readFlag("compute_curvature", ParameterPack::KeyType::Optional, computeCurvature_);
+  input.params().readFlag("verbose", ParameterPack::KeyType::Optional, printVerbose_);
   return;
 }
 void Calc_Isosurface::update(){
@@ -52,7 +53,8 @@ void Calc_Isosurface::calculate(){
 
 void Calc_Isosurface::output(){
   if(doOutput()){
-    printOutput();
+    if(!printVerbose_) printOutput();
+    else printOutputVerbose();
   }  
 }
 
@@ -69,6 +71,17 @@ void Calc_Isosurface::printOutput(){
   ofile << output;
   ofile.close();
 };
+
+void Calc_Isosurface::printOutputVerbose(){
+  std::string filepath = name_ + "_interface_" + std::to_string(box->frame()) + ".stl";
+  std::ofstream ofile(filepath);
+  FANCY_ASSERT(ofile.is_open(), "Failed to open output file for instantaneous interface step calculation.");
+  std::string output;
+  printSTL(mesh_, output);
+  ofile << output;
+  ofile.close();
+};
+
 void Calc_Isosurface::finalOutput(){
   //make the final mesh no matter what
   average_.scalarMult(1.0/(double)frame_counter_);

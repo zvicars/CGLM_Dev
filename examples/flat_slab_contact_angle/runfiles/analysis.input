@@ -1,0 +1,50 @@
+trajectory = traj_out.traj
+phi = in.phi
+
+ProbeVolume = {
+  name = pv
+  type = rectilinear
+  x_range = [ -1 1000 ]
+  y_range = [ -1 1000 ]
+  z_range = [ -1 1000 ]
+}
+
+Modifier = {
+  name = average
+  type = average
+  A = 1
+  B = 10
+  x0 = 0.6
+}
+
+Modifier = {
+  name = usephi
+  type = usephi
+  cutoff_threshold = [ -100 20 ]
+}
+
+Calculation = {
+  name = liq
+  type = isosurface
+  modifiers = [ average ]
+  probevolume = pv
+  output_frequency = -1
+  calculation_frequency = 1
+  equilibration = 10
+  end = 18
+  isovalue = 0.5
+  method = golosio
+}
+
+Calculation = {
+  name = solid_surfaces
+  type = isosurface
+  modifiers = [ usephi ]
+  probevolume = pv
+  output_frequency = -1
+  calculation_frequency = 1
+  equilibration = 10
+  end = 18
+  isovalue = 0.5
+  method = golosio
+}

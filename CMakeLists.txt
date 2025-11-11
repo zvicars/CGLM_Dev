@@ -10,3 +10,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 add_subdirectory(src)
 
 install(TARGETS CGLM b2xyz phi2xyz genphi gro2phifile analysis DESTINATION bin)
+install(DIRECTORY examples 
+        DESTINATION .
+        PATTERN "*.sh"
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
